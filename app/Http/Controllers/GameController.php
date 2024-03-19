@@ -10,62 +10,8 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
+    // Handles the actions during the day phase of the game
     public function gameDay()
     {
         $userId = auth()->id();
@@ -80,7 +26,6 @@ class GameController extends Controller
         $role = $userService->getRolesById($userGame[0]->role_id);
 
         $checkIfGameIsOver = $gameService->checkIfGameIsOver($userGame[0]->game_id);
-        // dd($checkIfGameIsOver);
 
         if ($checkIfGameIsOver == 2) {
             return view('game.day',compact('players', 'role','userId','userGame'));
@@ -89,6 +34,7 @@ class GameController extends Controller
         }
     }
 
+    // Handles the actions during the night phase of the game
     public function gameNight()
     {
         $userId = auth()->id();
@@ -104,11 +50,11 @@ class GameController extends Controller
         return view('game.night',compact('players', 'role','userId','userGame'));
     }
 
+     // Handles a player leaving the game
     public function leaveGame(Request $request, $id)
     {
 
         $userId = auth()->id();
-        // dd($id);
         $userId = auth()->id();
 
         $gameService = new GameService();
@@ -123,6 +69,7 @@ class GameController extends Controller
         return view('dashboard',compact('game','history'))->with('successMsg','You have left the game');
     }
 
+    // Handles killing a player during the day phase of the game
     public function killPlayerDay(Request $request, $id)
     {
 
@@ -151,11 +98,9 @@ class GameController extends Controller
         $players = $gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
-
-
-        // return view('game.night',compact('players', 'role','userId','userGame'));
     }
 
+    // Handles saving a player during the day phase of the game
     public function savePlayerDay(Request $request, $id)
     {
         $userId = auth()->id();
@@ -184,6 +129,7 @@ class GameController extends Controller
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
     }
     
+    // Handles instantly killing a player during the day phase of the game
     public function instaKillPlayerDay(Request $request, $id)
     {
 
@@ -213,6 +159,7 @@ class GameController extends Controller
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
     }
 
+     // Handles instantly killing a player during the night phase
     public function instaKillPlayerNight(Request $request, $id)
     {
 
@@ -242,6 +189,7 @@ class GameController extends Controller
         return redirect()->route('create.game', compact('players', 'role', 'userId', 'userGame'));
     }
 
+    // Skips the night phase of the game
     public function skipNight(Request $request)
     {
        

@@ -10,7 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                    @if ($game -> count() > 0)
+                    @if ($game ->count() > 0)
 
                     <button type="button" 
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
@@ -30,8 +30,8 @@
 
                     @endif
 
-
-
+                    @if($history->count() > 0)
+                
                     <div class="p-6 text-gray-900 dark:text-gray-100" style="margin-top: 2rem;">
                         {{ __("Last 10 Games") }}
                     </div>
@@ -80,7 +80,7 @@
                                             </th>
                                                 @if($game->winner === 0)
                                                 <td class="px-6 py-4 text-right">
-                                                    Mafia have Wone! 
+                                                    Mafia have Won! 
                                                 </td>
                                                 @elseif($game->winner === 1)
                                                 <td class="px-6 py-4 text-right">
@@ -98,6 +98,7 @@
                             </tbody>
                         </table>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

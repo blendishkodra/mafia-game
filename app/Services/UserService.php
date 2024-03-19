@@ -10,6 +10,7 @@ use App\Models\User;
 class UserService
 {
 
+    // Retrieves the active game associated with the user
     public function getGame($user_id){
 
         $games = User::select('*')
@@ -23,6 +24,7 @@ class UserService
 
     }
 
+    // Retrieves the game history for the user, including finished games
     public function getGameHistory($user_id){
 
         $history = Game::with(['status','pivotGameUser'])->where('status_id',2)->orderBy('id','desc')->limit(10)->get();
@@ -31,6 +33,7 @@ class UserService
 
     }
 
+    // Retrieves all available roles
     public function getRoles(){
 
         $roles = Role::all();
@@ -39,6 +42,7 @@ class UserService
 
     }
     
+    // Retrieves available roles by ID
     public function getRolesById($id){
 
         $role = Role::where('id', $id)->firstOrFail();

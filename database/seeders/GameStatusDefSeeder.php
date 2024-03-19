@@ -20,7 +20,7 @@ class GameStatusDefSeeder extends Seeder
 
         // Insert game statuses into the database
         foreach ($gameStatuses as $status) {
-            DB::table('game_status_def')->insert($status);
+            DB::table('game_status_defs')->insert($status);
         }
     }
 }
