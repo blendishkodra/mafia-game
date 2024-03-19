@@ -15,7 +15,7 @@ This is a simple Laravel Web Game based on [Mafia (party game)](https://en.wikip
 - Run `npm run dev`
 - Open your browser and go to `http://localhost:8000`
 
-## UML of the application
+## UML 
 
-!(mafiaGameDiagram.png)
+![Mafia Game UML Diagram](mafiaGameDiagram.png)
 
