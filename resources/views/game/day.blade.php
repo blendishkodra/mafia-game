@@ -57,7 +57,10 @@
                             <tbody>
                                 @foreach ($players as $player)
                                     @if ($player->user->id != $userId && $player->is_alive == 1)
-                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                            @if ($player->role_id == 1 && $role->id == 1)
+                                                style="background-color: #fee2e2;"
+                                            @endif>
                                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {{  $player->user->name . " ". $player->user->lastname }}
                                             </th>
@@ -67,17 +70,23 @@
                                                 <div class="flex flex-wrap justify-end">
                                                         <form method="POST" action="{{ route('kill.player.day', ['user_id' => $player->user->id]) }}" class="mr-2 mb-2">
                                                             @csrf
-                                                            <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">Kill Player</button>
+                                                            <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">
+                                                                Kill Player
+                                                            </button>
                                                         </form>
                                                         @if($role->id == 3)
-                                                        <form method="POST" action="{{ route('kill.player.day', ['user_id' => $player->user->id]) }}" class="mr-2 mb-2">
+                                                        <form method="POST" action="{{ route('save.player.day', ['user_id' => $player->user->id]) }}" class="mr-2 mb-2">
                                                             @csrf
-                                                            <button class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">Save Player</button>
+                                                            <button class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">
+                                                                Save Player
+                                                            </button>
                                                         </form>
                                                         @elseif($role->id == 5)
-                                                        <form method="POST" action="{{ route('kill.player.day', ['user_id' => $player->user->id]) }}" class="mb-2">
+                                                        <form method="POST" action="{{ route('insta.kill.player.day', ['user_id' => $player->user->id]) }}" class="mb-2">
                                                             @csrf
-                                                            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">Insta kill</button>
+                                                            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">
+                                                                Insta kill
+                                                            </button>
                                                         </form>
                                                         @endif
                                                     </div>

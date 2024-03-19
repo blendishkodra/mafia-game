@@ -61,9 +61,14 @@
                                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {{  $player->user->name . " ". $player->user->lastname }}
                                             </th>
-                                            @if($userGame[0]->is_alive == 1)
+                                            @if($userGame[0]->is_alive == 1 && $player->role_id != 1)
                                                 <td class="px-6 py-4 text-right">
-                                                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline">Kill</a>
+                                                    <form method="POST" action="{{ route('insta.kill.player.night', ['user_id' => $player->user->id]) }}" class="mb-2">
+                                                        @csrf
+                                                        <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none focus:ring focus:ring-opacity-50" type="submit">
+                                                            Insta kill
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             @endif
                                         </tr>

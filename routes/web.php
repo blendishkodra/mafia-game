@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/game/kill/{user_id}', [GameController::class, 'killPlayerDay'])->name('kill.player.day');
     Route::post('/game/insta-kill/{user_id}', [GameController::class, 'instaKillPlayerDay'])->name('insta.kill.player.day');
     Route::post('/game/save/{user_id}', [GameController::class, 'savePlayerDay'])->name('save.player.day');
+
+    Route::post('/game/insta-kill/{user_id}/night', [GameController::class, 'instaKillPlayerNight'])->name('insta.kill.player.night');
+
     
 });
 

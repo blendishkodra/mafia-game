@@ -16,10 +16,18 @@ class UserService
                         ->leftJoin('pivot_game_users as pgu', 'users.id', '=', 'pgu.user_id')
                         ->leftJoin('games as g', 'pgu.game_id', '=', 'g.id')
                         ->where('users.id', $user_id)
-                        ->where('g.status', 1)
+                        ->where('g.status_id', 1)
                         ->get();
 
         return $games;
+
+    }
+
+    public function getGameHistory($user_id){
+
+        $history = Game::with(['status','pivotGameUser'])->where('status_id',2)->orderBy('id','desc')->get();
+
+        return $history;
 
     }
 

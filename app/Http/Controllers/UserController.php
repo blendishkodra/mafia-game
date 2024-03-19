@@ -17,9 +17,12 @@ class UserController extends Controller
 
         $userId = auth()->id();
         $userService = new UserService();
-        $game = $userService->getGame($userId);
 
-        return view('dashboard',compact('game'));;
+        $game = $userService->getGame($userId);
+        
+        $history = $userService->getGameHistory($userId);
+
+        return view('dashboard',compact('game','history'));;
     }
 
     /**

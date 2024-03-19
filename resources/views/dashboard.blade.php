@@ -29,6 +29,75 @@
                     </button>
 
                     @endif
+
+
+
+                    <div class="p-6 text-gray-900 dark:text-gray-100" style="margin-top: 2rem;">
+                        {{ __("History Table") }}
+                    </div>
+
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg" style=" margin-top: 2rem;"> 
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">
+                                        Player
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        <span class="sr-only">Edit</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                @foreach ($history as $game)
+                                    @php
+                                        $role_name = null;
+                                        if ($game->pivotGameUser && $game->pivotGameUser->role_id) {
+                                            if ($game->pivotGameUser->role_id == 1) {
+                                                $role_name = "Mafia";
+                                            } elseif ($game->pivotGameUser->role_id == 2) {
+                                                $role_name = "Villager";
+                                            } elseif ($game->pivotGameUser->role_id == 3) {
+                                                $role_name = "Doctor";
+                                            } elseif ($game->pivotGameUser->role_id == 4) {
+                                                $role_name = "Mayor";
+                                            } elseif ($game->pivotGameUser->role_id == 5) {
+                                                $role_name = "Sheriff";
+                                            }
+                                        }
+                                    @endphp
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                        @if(($game->winner === 0 && $game->pivotGameUser->role_id == 1) || ($game->winner === 1 && $game->pivotGameUser->role_id != 1))
+                                        style="background-color: #d9f99d;"
+                                        @elseif($game->winner === null)
+                                        style="background-color: #cbd5e1;"
+                                        @else
+                                        style="background-color: #fee2e2;"
+                                        @endif>
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                               {{ $game->id." ".$game->status->name . " (". $role_name . ")" }}
+                                            </th>
+                                                @if($game->winner === 0)
+                                                <td class="px-6 py-4 text-right">
+                                                    Mafia have Wone! 
+                                                </td>
+                                                @elseif($game->winner === 1)
+                                                <td class="px-6 py-4 text-right">
+                                                    Mafia have Lost!
+                                                </td>
+                                                @else
+                                                <td class="px-6 py-4 text-right">
+                                                    You have leaft the game! 
+                                                </td>
+                                                @endif
+                                           
+                                        </tr>
+                                  
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
