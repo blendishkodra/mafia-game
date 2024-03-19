@@ -25,7 +25,7 @@ class UserService
 
     public function getGameHistory($user_id){
 
-        $history = Game::with(['status','pivotGameUser'])->where('status_id',2)->orderBy('id','desc')->get();
+        $history = Game::with(['status','pivotGameUser'])->where('status_id',2)->orderBy('id','desc')->limit(10)->get();
 
         return $history;
 

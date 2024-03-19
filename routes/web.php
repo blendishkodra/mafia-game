@@ -17,18 +17,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    //Role explaination route
+    //Role route
     Route::get('/role', [UserController::class, 'role'])->name('role');
 
-    //Game explaination route
+    //Game route
     Route::get('/game/day', [GameController::class, 'gameDay'])->name('create.game');
-    Route::get('/game/night', [GameController::class, 'gameNight'])->name('night.game');
     Route::post('/game/leave/{id}', [GameController::class, 'leaveGame'])->name('leave.game');
     Route::post('/game/kill/{user_id}', [GameController::class, 'killPlayerDay'])->name('kill.player.day');
     Route::post('/game/insta-kill/{user_id}', [GameController::class, 'instaKillPlayerDay'])->name('insta.kill.player.day');
     Route::post('/game/save/{user_id}', [GameController::class, 'savePlayerDay'])->name('save.player.day');
 
+    Route::get('/game/night', [GameController::class, 'gameNight'])->name('night.game');
     Route::post('/game/insta-kill/{user_id}/night', [GameController::class, 'instaKillPlayerNight'])->name('insta.kill.player.night');
+    Route::post('/game/skip/night', [GameController::class, 'skipNight'])->name('skip.night');
 
     
 });

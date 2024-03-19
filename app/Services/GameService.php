@@ -97,7 +97,7 @@ class GameService
     public function leaveGame($game_id)
     {
         $leaveGame = Game::findOrFail($game_id);
-        $leaveGame->status = 2;
+        $leaveGame->status_id = 2;
         $leaveGame->save();
 
         return 1;
@@ -222,9 +222,7 @@ class GameService
             'save_player' => 1
         ]);
 
-        $killPlayer = PivotGameUser::where('game_id', $game_id)->where('user_id', $user_id_to)->first();
-        $killPlayer->is_alive = 0;
-        $killPlayer->save();
+        $this->killPlayer($game_id,$user_id_to);
 
         $pivotMafiaBot = PivotGameUser::where('game_id', $game_id)
                             ->where('is_alive', 1)
@@ -243,15 +241,41 @@ class GameService
                 'user_id_from' => $pivotMafiaBot[0],
                 'user_id_to' => $pivotBotVote->random(),
                 'round' => $round + 1,
-                'round_time' => 'day',
+                'round_time' => 'night',
                 'kill_player' => 1
             ]);
         
         $pivotMafiaKillBot = PivotGameRound::where('game_id', $game_id)->where('round',$round+1)->where('user_id_from',$pivotMafiaBot[0])->pluck('user_id_to');
 
-            $killPlayer = PivotGameUser::where('game_id', $game_id)->where('user_id', $pivotMafiaKillBot[0])->first();
-            $killPlayer->is_alive = 0;
-            $killPlayer->save();
+
+        $this->killPlayer($game_id,$pivotMafiaKillBot[0]);
+                
+        return 1;
+    }
+
+    public function skipNight($game_id,$round,)
+    {
+        
+        $pivotBot = PivotGameUser::where('game_id', $game_id)->where('is_alive', 1)->where('role_id',1)->pluck('user_id');
+
+        foreach ($pivotBot as $bot) {
+
+            $pivotBotVote = PivotGameUser::where('game_id', $game_id)->where('is_alive', 1)->where('user_id','!=',$bot)->pluck('user_id');
+
+
+            $pivot = PivotGameRound::create([
+                'game_id' => $game_id,
+                'user_id_from' => $bot,
+                'user_id_to' => $pivotBotVote->random(),
+                'round' => $round + 1,
+                'round_time' => 'night',
+                'kill_player' => 1
+            ]);
+
+            $pivotMafiaKillBot = PivotGameRound::where('game_id', $game_id)->where('round',$round+1)->where('user_id_from',$bot)->pluck('user_id_to');
+
+            $this->killPlayer($game_id,$pivotMafiaKillBot[0]);
+        }
                 
         return 1;
     }
@@ -283,9 +307,7 @@ class GameService
                 return 1;
             }
 
-            $killPlayer = PivotGameUser::where('game_id', $game_id)->where('user_id', $votes[0]->user_id_to)->first();
-            $killPlayer->is_alive = 0;
-            $killPlayer->save();
+            $this->killPlayer($game_id,$votes[0]->user_id_to);
         }
 
         return ;
@@ -297,13 +319,9 @@ class GameService
         $checkIfPlayeIsMafia = PivotGameUser::where('game_id', $game_id)->where('user_id', $user_id_to)->pluck('role_id');
 
         if($checkIfPlayeIsMafia[0] == 1) {
-            $killMafia = PivotGameUser::where('game_id', $game_id)->where('user_id', $user_id_to)->first();
-            $killMafia->is_alive = 0;
-            $killMafia->save();
+            $this->killPlayer($game_id,$user_id_to);
         }else{
-            $killSheriff = PivotGameUser::where('game_id', $game_id)->where('user_id', $user_id_from)->first();
-            $killSheriff->is_alive = 0;
-            $killSheriff->save();
+            $this->killPlayer($game_id,$user_id_from);
         }
 
         return 1;
@@ -315,18 +333,32 @@ class GameService
         $checkOtherAlive = PivotGameUser::where('game_id', $game_id)->where('is_alive', 1)->where('role_id','!=',1)->count();
 
         if($checkMafiaAlive == $checkOtherAlive || $checkOtherAlive < $checkMafiaAlive ) {
-            $game = Game::findOrFail($game_id);
-            $game->status = 2;
-            $game->winner = 0;
-            $game->save();
-            return 1;
-        }else{
-            $game = Game::findOrFail($game_id);
-            $game->status = 2;
-            $game->winner = 1;
-            $game->save();
+            $this->endGame($game_id,0);
+            return 0;
+        }elseif($checkMafiaAlive == 0) {
+            $this->endGame($game_id,1);
             return 1;
         }
+
+        return 2;
+    }
+
+    public function killPlayer($game_id,$user_id)
+    {
+        $killSheriff = PivotGameUser::where('game_id', $game_id)->where('user_id', $user_id)->first();
+        $killSheriff->is_alive = 0;
+        $killSheriff->save();
+
+        return 1;
+    }
+
+    public function endGame($game_id,$winner)
+    {
+        $game = Game::findOrFail($game_id);
+            $game->status_id = 2;
+            $game->winner = $winner;
+            $game->save();
+            return $winner;
     }
     
 }

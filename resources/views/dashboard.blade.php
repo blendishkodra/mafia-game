@@ -33,7 +33,7 @@
 
 
                     <div class="p-6 text-gray-900 dark:text-gray-100" style="margin-top: 2rem;">
-                        {{ __("History Table") }}
+                        {{ __("Last 10 Games") }}
                     </div>
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg" style=" margin-top: 2rem;"> 
@@ -44,7 +44,7 @@
                                         Player
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        <span class="sr-only">Edit</span>
+                                        <span class="sr-only">Game Status</span>
                                     </th>
                                 </tr>
                             </thead>
@@ -88,7 +88,7 @@
                                                 </td>
                                                 @else
                                                 <td class="px-6 py-4 text-right">
-                                                    You have leaft the game! 
+                                                    You have left the game! 
                                                 </td>
                                                 @endif
                                            

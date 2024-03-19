@@ -20,6 +20,16 @@
                         type="submit">Leave Game</button>
                     </form>
 
+
+                    
+                    @if($role->id != 1)
+                        <form method="POST" action="{{ route('skip.night') }}">
+                            @csrf
+                            <button class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+                            type="submit">Skip Night</button>
+                        </form>
+                    @endif
+
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         {{ __("You're  Role is:") }}
                     </div>
@@ -61,7 +71,7 @@
                                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {{  $player->user->name . " ". $player->user->lastname }}
                                             </th>
-                                            @if($userGame[0]->is_alive == 1 && $player->role_id != 1)
+                                            @if($userGame[0]->is_alive == 1 && $player->role_id != 1 && $role->id === 1)
                                                 <td class="px-6 py-4 text-right">
                                                     <form method="POST" action="{{ route('insta.kill.player.night', ['user_id' => $player->user->id]) }}" class="mb-2">
                                                         @csrf

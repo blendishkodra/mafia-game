@@ -79,7 +79,14 @@ class GameController extends Controller
 
         $role = $userService->getRolesById($userGame[0]->role_id);
 
-        return view('game.day',compact('players', 'role','userId','userGame'));
+        $checkIfGameIsOver = $gameService->checkIfGameIsOver($userGame[0]->game_id);
+        // dd($checkIfGameIsOver);
+
+        if ($checkIfGameIsOver == 2) {
+            return view('game.day',compact('players', 'role','userId','userGame'));
+        }else{
+            return redirect()->route('dashboard');
+        }
     }
 
     public function gameNight()
@@ -111,7 +118,9 @@ class GameController extends Controller
         $userService = new UserService();
         $game = $userService->getGame($userId);
 
-        return view('dashboard',compact('game'))->with('successMsg','You have left the game');
+        $history = $userService->getGameHistory($userId);
+
+        return view('dashboard',compact('game','history'))->with('successMsg','You have left the game');
     }
 
     public function killPlayerDay(Request $request, $id)
@@ -149,7 +158,6 @@ class GameController extends Controller
 
     public function savePlayerDay(Request $request, $id)
     {
-
         $userId = auth()->id();
      
         $userService = new UserService();
@@ -174,9 +182,6 @@ class GameController extends Controller
         $players = $gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
-
-
-        // return view('game.night',compact('players', 'role','userId','userGame'));
     }
     
     public function instaKillPlayerDay(Request $request, $id)
@@ -206,9 +211,6 @@ class GameController extends Controller
         $players = $gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
-
-
-        // return view('game.night',compact('players', 'role','userId','userGame'));
     }
 
     public function instaKillPlayerNight(Request $request, $id)
@@ -238,8 +240,35 @@ class GameController extends Controller
         $players = $gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('create.game', compact('players', 'role', 'userId', 'userGame'));
+    }
 
+    public function skipNight(Request $request)
+    {
+       
+        $userId = auth()->id();
+     
+        $userService = new UserService();
+        $gameService = new GameService();
+        
+        $userGame = $userService->getGame($userId)->shuffle();
+        
+        $round = $gameService->getRound($userGame[0]->game_id);
 
-        // return view('game.night',compact('players', 'role','userId','userGame'));
+        if ($round == null) {
+            $round = 0;
+        }else{
+            $round = $round->round;
+        } 
+        
+        $skipNight = $gameService->skipNight($userGame[0]->game_id,$round);
+
+        $game = $userService->getGame($userId);
+
+        $role = $userService->getRolesById($userGame[0]->role_id);
+
+        $players = $gameService->nightGame($userGame[0]->game_id);
+
+        return redirect()->route('create.game');
+
     }
 }

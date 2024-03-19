@@ -14,7 +14,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
         $userId = auth()->id();
         $userService = new UserService();
 
@@ -79,8 +78,6 @@ class UserController extends Controller
         $userService = new UserService();
 
         $roles = $userService->getRoles(); 
-
-        // dd($roles);
 
         return view('role',compact('roles'));
     }
