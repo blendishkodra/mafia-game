@@ -9,23 +9,30 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
-{
+{    
+    protected $gameService;
+    protected $userService;
+
+    // Constructor to instantiate GameService and UserService
+    public function __construct()
+    {
+        $this->gameService = new GameService();
+        $this->userService = new UserService();
+    }
 
     // Handles the actions during the day phase of the game
     public function gameDay()
     {
         $userId = auth()->id();
 
-        $gameService = new GameService();
-
-        $players = $gameService->createGame($userId)->shuffle();
+        $players = $this->gameService->createGame($userId)->shuffle();
         
         $userService = new UserService();
         $userGame = $userService->getGame($userId)->shuffle();
 
         $role = $userService->getRolesById($userGame[0]->role_id);
 
-        $checkIfGameIsOver = $gameService->checkIfGameIsOver($userGame[0]->game_id);
+        $checkIfGameIsOver = $this->gameService->checkIfGameIsOver($userGame[0]->game_id);
 
         if ($checkIfGameIsOver == 2) {
             return view('game.day',compact('players', 'role','userId','userGame'));
@@ -38,14 +45,12 @@ class GameController extends Controller
     public function gameNight()
     {
         $userId = auth()->id();
-        $gameService = new GameService();
-        $userService = new UserService();
         
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);       
+        $role = $this->userService->getRolesById($userGame[0]->role_id);       
 
         return view('game.night',compact('players', 'role','userId','userGame'));
     }
@@ -57,14 +62,11 @@ class GameController extends Controller
         $userId = auth()->id();
         $userId = auth()->id();
 
-        $gameService = new GameService();
-        $leaveGame = $gameService->leaveGame($id);
+        $leaveGame = $this->gameService->leaveGame($id);
 
-        
-        $userService = new UserService();
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $history = $userService->getGameHistory($userId);
+        $history = $this->userService->getGameHistory($userId);
 
         return view('dashboard',compact('game','history'))->with('successMsg','You have left the game');
     }
@@ -76,12 +78,9 @@ class GameController extends Controller
         
         $userId = auth()->id();
      
-        $userService = new UserService();
-        $gameService = new GameService();
-
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
         
-        $round = $gameService->getRound($userGame[0]->game_id);
+        $round = $this->gameService->getRound($userGame[0]->game_id);
 
         if ($round == null) {
             $round = 0;
@@ -89,13 +88,13 @@ class GameController extends Controller
             $round = $round->round;
         }
         
-        $killPlayerDay = $gameService->killPlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
+        $killPlayerDay = $this->gameService->killPlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
 
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);
+        $role = $this->userService->getRolesById($userGame[0]->role_id);
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
     }
@@ -104,13 +103,10 @@ class GameController extends Controller
     public function savePlayerDay(Request $request, $id)
     {
         $userId = auth()->id();
-     
-        $userService = new UserService();
-        $gameService = new GameService();
         
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
         
-        $round = $gameService->getRound($userGame[0]->game_id);
+        $round = $this->gameService->getRound($userGame[0]->game_id);
 
         if ($round == null) {
             $round = 0;
@@ -118,13 +114,13 @@ class GameController extends Controller
             $round = $round->round;
         } 
         
-        $savePlayerDay = $gameService->savePlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
+        $savePlayerDay = $this->gameService->savePlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
 
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);
+        $role = $this->userService->getRolesById($userGame[0]->role_id);
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
     }
@@ -134,13 +130,10 @@ class GameController extends Controller
     {
 
         $userId = auth()->id();
-     
-        $userService = new UserService();
-        $gameService = new GameService();
         
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
         
-        $round = $gameService->getRound($userGame[0]->game_id);
+        $round = $this->gameService->getRound($userGame[0]->game_id);
 
         if ($round == null) {
             $round = 0;
@@ -148,13 +141,13 @@ class GameController extends Controller
             $round = $round->round;
         } 
         
-        $instaKillPlayerDay = $gameService->instaKillPlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
+        $instaKillPlayerDay = $this->gameService->instaKillPlayerDay($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
 
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);
+        $role = $this->userService->getRolesById($userGame[0]->role_id);
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('night.game', compact('players', 'role', 'userId', 'userGame'));
     }
@@ -164,13 +157,10 @@ class GameController extends Controller
     {
 
         $userId = auth()->id();
-     
-        $userService = new UserService();
-        $gameService = new GameService();
         
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
         
-        $round = $gameService->getRound($userGame[0]->game_id);
+        $round = $this->gameService->getRound($userGame[0]->game_id);
 
         if ($round == null) {
             $round = 0;
@@ -178,13 +168,13 @@ class GameController extends Controller
             $round = $round->round;
         } 
         
-        $instaKillPlayerNight = $gameService->instaKillPlayerNight($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
+        $instaKillPlayerNight = $this->gameService->instaKillPlayerNight($userGame[0]->game_id,$userId,$id,$round,$userGame[0]->role_id);
 
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);
+        $role = $this->userService->getRolesById($userGame[0]->role_id);
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('create.game', compact('players', 'role', 'userId', 'userGame'));
     }
@@ -193,14 +183,11 @@ class GameController extends Controller
     public function skipNight(Request $request)
     {
        
-        $userId = auth()->id();
-     
-        $userService = new UserService();
-        $gameService = new GameService();
+        $userId = auth()->id();;
         
-        $userGame = $userService->getGame($userId)->shuffle();
+        $userGame = $this->userService->getGame($userId)->shuffle();
         
-        $round = $gameService->getRound($userGame[0]->game_id);
+        $round = $this->gameService->getRound($userGame[0]->game_id);
 
         if ($round == null) {
             $round = 0;
@@ -208,13 +195,13 @@ class GameController extends Controller
             $round = $round->round;
         } 
         
-        $skipNight = $gameService->skipNight($userGame[0]->game_id,$round);
+        $skipNight = $this->gameService->skipNight($userGame[0]->game_id,$round);
 
-        $game = $userService->getGame($userId);
+        $game = $this->userService->getGame($userId);
 
-        $role = $userService->getRolesById($userGame[0]->role_id);
+        $role = $this->userService->getRolesById($userGame[0]->role_id);
 
-        $players = $gameService->nightGame($userGame[0]->game_id);
+        $players = $this->gameService->nightGame($userGame[0]->game_id);
 
         return redirect()->route('create.game');
 

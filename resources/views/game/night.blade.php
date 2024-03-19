@@ -20,7 +20,13 @@
                         type="submit">Leave Game</button>
                     </form>
 
-
+                    @if($userGame[0]->is_alive == 0)
+                    <form method="POST" action="{{ route('leave.game', ['id' => $userGame[0]->game_id]) }}">
+                        @csrf
+                        <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+                        type="submit">You are Dead leave!</button>
+                    </form>
+                    @endif
                     
                     @if($role->id != 1)
                         <form method="POST" action="{{ route('skip.night') }}">
@@ -104,7 +110,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($players as $player)
-                                    @if ($player->user->id != $userId && $player->is_alive == 0)
+                                    @if ($player->is_alive == 0)
                                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" 
                                             style="background-color: #F6A0A0;">
                                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
